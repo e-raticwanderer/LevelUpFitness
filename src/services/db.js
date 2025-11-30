@@ -245,3 +245,19 @@ export const RANKS = [
     { name: 'Master', minXp: 5000, icon: 'rank-master' },       // Star Wars
     { name: 'Kwisatz Haderach', minXp: 10000, icon: 'rank-kwisatz' } // Dune
 ];
+
+// Backwards-compatible aggregate export for modules importing `{ db }`
+export const db = {
+    getTrainerProfile,
+    getClients,
+    getClient,
+    getDashboardStats,
+    getWeeklyPlan,
+    saveWeeklyPlan,
+    getWorkoutLog,
+    saveWorkoutLog,
+    getClientHistory,
+    getWorkouts,
+    updateUser,
+    RANKS
+};
