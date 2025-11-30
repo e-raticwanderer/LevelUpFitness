@@ -4,8 +4,7 @@
 **Status:** OPERATIONAL  
 **Clearance:** UNCLASSIFIED
 
-## 📋 Mission Overview
-AlterFit is a high-fidelity, gamified fitness application designed to transform standard training protocols into tactical missions. It leverages a "Gamer HUD" aesthetic to provide immediate visual feedback, RPG-style progression, and a distraction-free interface for serious training.
+## 📋 Mission Overview: LevelUp is a high-fidelity, gamified fitness library application designed to transform standard training protocols into tactical missions. It leverages a "Gamer HUD" aesthetic to provide immediate visual feedback, RPG-style progression, and a distraction-free interface for serious training.
 
 ---
 
@@ -16,22 +15,11 @@ AlterFit is a high-fidelity, gamified fitness application designed to transform 
 - **Outcome**: Basic workout logging, local storage database (`db.js`), and initial "Gamer HUD" styling.
 - **Status**: Deprecated.
 
-### **Phase 2: The Blackout Event (v2.0)**
-- **Incident Report**: Upon refactoring the navigation architecture for role-based access control (RBAC), the system suffered a critical rendering failure.
-- **Symptoms**:
-  - Application loaded to a "Black Screen" after login.
-  - Header and Sidebar were visible, but the main content area (Dashboard) was void.
-  - No console errors were initially visible, suggesting a logical routing issue rather than a crash.
-- **Root Cause Analysis**: The `Layout.jsx` component was implemented to accept `{children}` props, but was utilized as a parent `Route` element in `App.jsx`. In `react-router-dom` v6, parent routes must render an `<Outlet />` to display their child routes. Since `Layout` was not rendering `Outlet`, the child pages (Dashboard, etc.) were effectively silenced.
-- **Resolution (v2.0.1)**:
-  - **Fix**: Modified `Layout.jsx` to replace `{children}` with `<Outlet />`.
-  - **Result**: Visual systems restored. Navigation between "System" (Dashboard) and "Mission" (Active Plan) confirmed operational.
-
-### **Phase 3: Gamification Upgrade (v2.1.0 - Current)**
-- **Objective**: Implement the "Cyber-Soldier" engagement engine.
+### **Phase 2: Gamification Upgrade (v2.1.0 - Current)**
+- **Objective**: Implement engagement engine.
 - **Features Added**:
   - **XP System**: Users earn XP based on training volume (1 XP per 100 lbs).
-  - **Sci-Fi Ranking**: Replaced generic ranks with a thematic progression:
+  - **Sci-Fi Ranking**: Implemented thematic progression:
     - 🛡️ **Cadet** (0 XP)
     - 🛡️ **Trooper** (500 XP)
     - ⚔️ **Centurion** (1000 XP)
@@ -75,30 +63,3 @@ Administrative interface for "Commanders" (Trainers).
 - **Database**: LocalStorage Mock DB (`src/services/db.js`)
 - **Visual Effects**: `canvas-confetti` (Customized for "Data Drop" effect)
 - **Icons**: Lucide React
-
----
-
-## 🚀 Deployment Protocol
-
-1.  **Initialize System**:
-    ```bash
-    npm install
-    ```
-    
-2.  **Launch Interface**:
-    ```bash
-    npm run dev
-    ```
-
-3.  **Access Point**:
-    Navigate to `http://localhost:5173`
-
----
-
-## 🔐 Access Codes
-- **Operative (Client)**: `client-1` (Auto-login available)
-- **Commander (Trainer)**: `trainer-1` (Auto-login available)
-
----
-
-_System maintained by Angular Circle. Unauthorized access is prohibited._
