@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Shield, Trophy, Zap, Target, Crosshair } from 'lucide-react';
-import { db } from '../services/db';
+import { getDashboardStats } from '../services/db';
 import { useGamification } from '../context/GamificationContext';
+import { calculateSystemLoad, calculateAccuracy } from '../services/dashboardUtils';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
     const [stats, setStats] = useState(null);
+    const [systemLoad, setSystemLoad] = useState([]);
+    const [accuracy, setAccuracy] = useState(90);
     const { rank, level, currentXp, nextLevelXp } = useGamification();
 
     useEffect(() => {
-        const dashboardStats = db.getDashboardStats();
+        const dashboardStats = getDashboardStats();
         setStats(dashboardStats);
+        setSystemLoad(calculateSystemLoad());
+        setAccuracy(calculateAccuracy());
     }, []);
 
     if (!stats) return <div className="text-neon-green font-orbitron animate-pulse">LOADING TACTICAL DATA...</div>;
@@ -83,7 +88,7 @@ const Dashboard = () => {
                 <StatCard 
                     icon={Crosshair} 
                     label="Accuracy" 
-                    value="94%" 
+                    value={`${accuracy}%`} 
                     subtext="RPE TARGETS MET" 
                     color="text-alert-red"
                 />
@@ -105,15 +110,7 @@ const Dashboard = () => {
                     
                     <div className="flex-1 w-full min-h-[200px]">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={[
-                                { name: 'Mon', load: 4000 },
-                                { name: 'Tue', load: 3000 },
-                                { name: 'Wed', load: 2000 },
-                                { name: 'Thu', load: 2780 },
-                                { name: 'Fri', load: 1890 },
-                                { name: 'Sat', load: 2390 },
-                                { name: 'Sun', load: 3490 },
-                            ]}>
+                            <AreaChart data={systemLoad}>
                                 <defs>
                                     <linearGradient id="colorLoad" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#39ff14" stopOpacity={0.3}/>

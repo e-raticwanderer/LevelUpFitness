@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Search, Filter, Play, Info, PlusCircle } from 'lucide-react';
-import { db } from '../services/db';
+import useExercises, { mapExercise } from '../hooks/useExercises';
 
-const CATEGORIES = ['All', 'Legs', 'Chest', 'Back', 'Shoulders', 'Arms', 'Core', 'Cardio', 'HITT'];
+// Dynamically derive categories from exercises
+function getCategories(exercises) {
+    const cats = Array.from(new Set(exercises.map(e => e.category))).filter(Boolean);
+    return ['All', ...cats.sort()];
+}
 
 const WorkoutLibrary = ({ onSelect }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [workouts, setWorkouts] = useState([]);
+    const { exercises: workouts, loading, error } = useExercises();
+    const categories = getCategories(workouts);
 
-    useEffect(() => {
-        setWorkouts(db.getWorkouts());
-    }, []);
-
-    const filteredWorkouts = workouts.filter(workout => {
-        const matchesSearch = workout.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredWorkouts = (workouts || []).filter(workout => {
+        const matchesSearch = (workout.title || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = selectedCategory === 'All' || workout.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
@@ -53,7 +54,7 @@ const WorkoutLibrary = ({ onSelect }) => {
                     />
                 </div>
                 <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 custom-scrollbar">
-                    {CATEGORIES.map(cat => (
+                    {categories.map(cat => (
                         <button
                             key={cat}
                             onClick={() => setSelectedCategory(cat)}
@@ -70,6 +71,9 @@ const WorkoutLibrary = ({ onSelect }) => {
             </div>
 
             {/* Grid */}
+            {(loading || error) && (
+                <div className={`font-mono ${loading ? 'text-neon-green' : 'text-alert-red text-sm'}`}>{loading ? 'LOADING ARMORY...' : error}</div>
+            )}
             <div className={`grid grid-cols-1 ${onSelect ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3'} gap-6`}>
                 {filteredWorkouts.map(workout => (
                     <div 

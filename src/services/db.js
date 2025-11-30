@@ -83,169 +83,159 @@ const saveDB = (data) => {
     localStorage.setItem('alterfit_db', JSON.stringify(data));
 };
 
-export const db = {
-    // --- User & Auth ---
-    getTrainerProfile: () => {
-        const data = loadDB();
-        return data.users.find(u => u.id === SEED_TRAINER_ID);
-    },
 
-    getClients: () => {
-        const data = loadDB();
-        return data.users.filter(u => u.trainer_id === SEED_TRAINER_ID);
-    },
+// --- User & Auth ---
+export function getTrainerProfile() {
+    const data = loadDB();
+    return data.users.find(u => u.id === SEED_TRAINER_ID);
+}
 
-    getClient: (id) => {
-        const data = loadDB();
-        return data.users.find(u => u.id === id);
-    },
+export function getClients() {
+    const data = loadDB();
+    return data.users.filter(u => u.trainer_id === SEED_TRAINER_ID);
+}
 
-    // --- Dashboard Stats ---
-    getDashboardStats: () => {
-        const data = loadDB();
-        const clients = data.users.filter(u => u.trainer_id === SEED_TRAINER_ID);
-        const clientIds = clients.map(c => c.id);
+export function getClient(id) {
+    const data = loadDB();
+    return data.users.find(u => u.id === id);
+}
 
-        // Filter logs for these clients
-        const logs = data.logs ? data.logs.filter(l => clientIds.includes(l.client_id)) : [];
+// --- Dashboard Stats ---
+export function getDashboardStats() {
+    const data = loadDB();
+    const clients = data.users.filter(u => u.trainer_id === SEED_TRAINER_ID);
+    const clientIds = clients.map(c => c.id);
+    const logs = data.logs ? data.logs.filter(l => clientIds.includes(l.client_id)) : [];
+    const activeClients = clients.filter(c => c.status === 'Active').length;
+    const completedWorkouts = logs.filter(l => l.completed).length;
+    const totalVolume = logs.reduce((acc, l) => acc + (l.volume || 0), 0);
+    return {
+        activeClients,
+        completedWorkouts,
+        totalVolume,
+        recentActivity: logs.slice(0, 5).map(l => {
+            const client = clients.find(c => c.id === l.client_id);
+            return {
+                id: l.id,
+                clientId: l.client_id,
+                clientName: client?.name || 'Unknown',
+                action: l.completed ? 'completed a workout' : 'logged a workout',
+                time: new Date(l.date).toLocaleDateString()
+            };
+        })
+    };
+}
 
-        const activeClients = clients.filter(c => c.status === 'Active').length;
-        const completedWorkouts = logs.filter(l => l.completed).length;
-        const totalVolume = logs.reduce((acc, l) => acc + (l.volume || 0), 0);
+// --- Plans & Builder ---
+export function getWeeklyPlan(clientId) {
+    const data = loadDB();
+    return data.plans.find(p => p.client_id === clientId && p.active) || null;
+}
 
-        return {
-            activeClients,
-            completedWorkouts,
-            totalVolume,
-            recentActivity: logs.slice(0, 5).map(l => {
-                const client = clients.find(c => c.id === l.client_id);
-                return {
-                    id: l.id,
-                    clientId: l.client_id,
-                    clientName: client?.name || 'Unknown',
-                    action: l.completed ? 'completed a workout' : 'logged a workout',
-                    time: new Date(l.date).toLocaleDateString()
-                };
-            })
-        };
-    },
-
-    // --- Plans & Builder ---
-    getWeeklyPlan: (clientId) => {
-        const data = loadDB();
-        return data.plans.find(p => p.client_id === clientId && p.active) || null;
-    },
-
-    saveWeeklyPlan: (plan) => {
-        const data = loadDB();
-        const existingIndex = data.plans.findIndex(p => p.id === plan.id);
-
-        if (existingIndex >= 0) {
-            data.plans[existingIndex] = plan;
-        } else {
-            plan.id = uuidv4();
-            data.plans.push(plan);
-        }
-        saveDB(data);
-        return plan;
-    },
-
-    // --- Logs & Execution ---
-    getWorkoutLog: (clientId, date) => {
-        const data = loadDB();
-        // Simple date matching YYYY-MM-DD
-        return data.logs.find(l => l.client_id === clientId && l.date === date);
-    },
-
-    saveWorkoutLog: (log) => {
-        const data = loadDB();
-        const existingIndex = data.logs.findIndex(l => l.id === log.id);
-
-        if (existingIndex >= 0) {
-            data.logs[existingIndex] = log;
-        } else {
-            if (!log.id) log.id = uuidv4();
-            data.logs.push(log);
-        }
-        saveDB(data);
-        return log;
-    },
-
-    getClientHistory: (clientId) => {
-        const data = loadDB();
-        return data.logs
-            .filter(l => l.client_id === clientId)
-            .sort((a, b) => new Date(b.date) - new Date(a.date));
-    },
-
-    // --- Workouts ---
-    getWorkouts: () => {
-        // For MVP, we'll return a static list if not in DB, or we could seed it.
-        // Let's return the static list we had in WorkoutLibrary for now, but centralized here.
-        return [
-            {
-                id: 1,
-                title: 'Barbell Back Squat',
-                category: 'Legs',
-                difficulty: 'Intermediate',
-                videoUrl: 'https://www.youtube.com/watch?v=ultWZbGWL5c',
-                thumbnail: 'https://img.youtube.com/vi/ultWZbGWL5c/maxresdefault.jpg'
-            },
-            {
-                id: 2,
-                title: 'Bench Press',
-                category: 'Chest',
-                difficulty: 'Intermediate',
-                videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg',
-                thumbnail: 'https://img.youtube.com/vi/rT7DgCr-3pg/maxresdefault.jpg'
-            },
-            {
-                id: 3,
-                title: 'Deadlift',
-                category: 'Back',
-                difficulty: 'Advanced',
-                videoUrl: 'https://www.youtube.com/watch?v=op9kVnSso6Q',
-                thumbnail: 'https://img.youtube.com/vi/op9kVnSso6Q/maxresdefault.jpg'
-            },
-            {
-                id: 4,
-                title: 'Overhead Press',
-                category: 'Shoulders',
-                difficulty: 'Intermediate',
-                videoUrl: 'https://www.youtube.com/watch?v=2yjwXTZQDDI',
-                thumbnail: 'https://img.youtube.com/vi/2yjwXTZQDDI/maxresdefault.jpg'
-            },
-            {
-                id: 5,
-                title: 'Pull Up',
-                category: 'Back',
-                difficulty: 'Beginner',
-                videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
-                thumbnail: 'https://img.youtube.com/vi/eGo4IYlbE5g/maxresdefault.jpg'
-            },
-            {
-                id: 6,
-                title: 'Dumbbell Lunge',
-                category: 'Legs',
-                difficulty: 'Beginner',
-                videoUrl: 'https://www.youtube.com/watch?v=D7KaRcUTQeE',
-                thumbnail: 'https://img.youtube.com/vi/D7KaRcUTQeE/maxresdefault.jpg'
-            }
-        ];
-    },
-
-    // --- Gamification ---
-    updateUser: (id, updates) => {
-        const data = loadDB();
-        const index = data.users.findIndex(u => u.id === id);
-        if (index !== -1) {
-            data.users[index] = { ...data.users[index], ...updates };
-            saveDB(data);
-            return data.users[index];
-        }
-        return null;
+export function saveWeeklyPlan(plan) {
+    const data = loadDB();
+    const existingIndex = data.plans.findIndex(p => p.id === plan.id);
+    if (existingIndex >= 0) {
+        data.plans[existingIndex] = plan;
+    } else {
+        plan.id = uuidv4();
+        data.plans.push(plan);
     }
-};
+    saveDB(data);
+    return plan;
+}
+
+// --- Logs & Execution ---
+export function getWorkoutLog(clientId, date) {
+    const data = loadDB();
+    return data.logs.find(l => l.client_id === clientId && l.date === date);
+}
+
+export function saveWorkoutLog(log) {
+    const data = loadDB();
+    const existingIndex = data.logs.findIndex(l => l.id === log.id);
+    if (existingIndex >= 0) {
+        data.logs[existingIndex] = log;
+    } else {
+        if (!log.id) log.id = uuidv4();
+        data.logs.push(log);
+    }
+    saveDB(data);
+    return log;
+}
+
+export function getClientHistory(clientId) {
+    const data = loadDB();
+    return data.logs
+        .filter(l => l.client_id === clientId)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+// --- Workouts ---
+export function getWorkouts() {
+    return [
+        {
+            id: 1,
+            title: 'Barbell Back Squat',
+            category: 'Legs',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=ultWZbGWL5c',
+            thumbnail: 'https://img.youtube.com/vi/ultWZbGWL5c/maxresdefault.jpg'
+        },
+        {
+            id: 2,
+            title: 'Bench Press',
+            category: 'Chest',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg',
+            thumbnail: 'https://img.youtube.com/vi/rT7DgCr-3pg/maxresdefault.jpg'
+        },
+        {
+            id: 3,
+            title: 'Deadlift',
+            category: 'Back',
+            difficulty: 'Advanced',
+            videoUrl: 'https://www.youtube.com/watch?v=op9kVnSso6Q',
+            thumbnail: 'https://img.youtube.com/vi/op9kVnSso6Q/maxresdefault.jpg'
+        },
+        {
+            id: 4,
+            title: 'Overhead Press',
+            category: 'Shoulders',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=2yjwXTZQDDI',
+            thumbnail: 'https://img.youtube.com/vi/2yjwXTZQDDI/maxresdefault.jpg'
+        },
+        {
+            id: 5,
+            title: 'Pull Up',
+            category: 'Back',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=eGo4IYlbE5g',
+            thumbnail: 'https://img.youtube.com/vi/eGo4IYlbE5g/maxresdefault.jpg'
+        },
+        {
+            id: 6,
+            title: 'Dumbbell Lunge',
+            category: 'Legs',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=D7KaRcUTQeE',
+            thumbnail: 'https://img.youtube.com/vi/D7KaRcUTQeE/maxresdefault.jpg'
+        }
+    ];
+}
+
+// --- Gamification ---
+export function updateUser(id, updates) {
+    const data = loadDB();
+    const index = data.users.findIndex(u => u.id === id);
+    if (index !== -1) {
+        data.users[index] = { ...data.users[index], ...updates };
+        saveDB(data);
+        return data.users[index];
+    }
+    return null;
+}
 
 export const RANKS = [
     { name: 'Cadet', minXp: 0, icon: 'rank-cadet' },           // BSG
