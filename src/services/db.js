@@ -174,24 +174,43 @@ export function getClientHistory(clientId) {
 // --- Workouts ---
 export function getWorkouts() {
     return [
+        // CHEST
         {
             id: 1,
-            title: 'Barbell Back Squat',
-            category: 'Legs',
-            difficulty: 'Intermediate',
-            videoUrl: 'https://www.youtube.com/watch?v=ultWZbGWL5c',
-            thumbnail: 'https://img.youtube.com/vi/ultWZbGWL5c/maxresdefault.jpg'
-        },
-        {
-            id: 2,
-            title: 'Bench Press',
+            title: 'Barbell Bench Press',
             category: 'Chest',
             difficulty: 'Intermediate',
             videoUrl: 'https://www.youtube.com/watch?v=rT7DgCr-3pg',
             thumbnail: 'https://img.youtube.com/vi/rT7DgCr-3pg/maxresdefault.jpg'
         },
         {
+            id: 2,
+            title: 'Incline Dumbbell Press',
+            category: 'Chest',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=8iPEnn-ltC8',
+            thumbnail: 'https://img.youtube.com/vi/8iPEnn-ltC8/maxresdefault.jpg'
+        },
+        {
             id: 3,
+            title: 'Cable Flye',
+            category: 'Chest',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=Jle0bVo5Dn0',
+            thumbnail: 'https://img.youtube.com/vi/Jle0bVo5Dn0/maxresdefault.jpg'
+        },
+        {
+            id: 4,
+            title: 'Dips',
+            category: 'Chest',
+            difficulty: 'Advanced',
+            videoUrl: 'https://www.youtube.com/watch?v=KF-UwJrdFdY',
+            thumbnail: 'https://img.youtube.com/vi/KF-UwJrdFdY/maxresdefault.jpg'
+        },
+        
+        // BACK
+        {
+            id: 5,
             title: 'Deadlift',
             category: 'Back',
             difficulty: 'Advanced',
@@ -199,15 +218,7 @@ export function getWorkouts() {
             thumbnail: 'https://img.youtube.com/vi/op9kVnSso6Q/maxresdefault.jpg'
         },
         {
-            id: 4,
-            title: 'Overhead Press',
-            category: 'Shoulders',
-            difficulty: 'Intermediate',
-            videoUrl: 'https://www.youtube.com/watch?v=2yjwXTZQDDI',
-            thumbnail: 'https://img.youtube.com/vi/2yjwXTZQDDI/maxresdefault.jpg'
-        },
-        {
-            id: 5,
+            id: 6,
             title: 'Pull Up',
             category: 'Back',
             difficulty: 'Beginner',
@@ -215,12 +226,246 @@ export function getWorkouts() {
             thumbnail: 'https://img.youtube.com/vi/eGo4IYlbE5g/maxresdefault.jpg'
         },
         {
-            id: 6,
+            id: 7,
+            title: 'Barbell Row',
+            category: 'Back',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=p2OPXmnXnqA',
+            thumbnail: 'https://img.youtube.com/vi/p2OPXmnXnqA/maxresdefault.jpg'
+        },
+        {
+            id: 8,
+            title: 'Lat Pulldown',
+            category: 'Back',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=Yw6W6CKXz-8',
+            thumbnail: 'https://img.youtube.com/vi/Yw6W6CKXz-8/maxresdefault.jpg'
+        },
+        {
+            id: 9,
+            title: 'Single Arm Dumbbell Row',
+            category: 'Back',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=roCP6wYEYX0',
+            thumbnail: 'https://img.youtube.com/vi/roCP6wYEYX0/maxresdefault.jpg'
+        },
+        
+        // LEGS
+        {
+            id: 10,
+            title: 'Barbell Back Squat',
+            category: 'Legs',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=ultWZbGWL5c',
+            thumbnail: 'https://img.youtube.com/vi/ultWZbGWL5c/maxresdefault.jpg'
+        },
+        {
+            id: 11,
+            title: 'Leg Press',
+            category: 'Legs',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=IZxyjW7MPOU',
+            thumbnail: 'https://img.youtube.com/vi/IZxyjW7MPOU/maxresdefault.jpg'
+        },
+        {
+            id: 12,
+            title: 'Leg Curl',
+            category: 'Legs',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=1Ip2w_-c2B0',
+            thumbnail: 'https://img.youtube.com/vi/1Ip2w_-c2B0/maxresdefault.jpg'
+        },
+        {
+            id: 13,
             title: 'Dumbbell Lunge',
             category: 'Legs',
             difficulty: 'Beginner',
             videoUrl: 'https://www.youtube.com/watch?v=D7KaRcUTQeE',
             thumbnail: 'https://img.youtube.com/vi/D7KaRcUTQeE/maxresdefault.jpg'
+        },
+        {
+            id: 14,
+            title: 'Leg Extension',
+            category: 'Legs',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=tfKuTU_hRvs',
+            thumbnail: 'https://img.youtube.com/vi/tfKuTU_hRvs/maxresdefault.jpg'
+        },
+        {
+            id: 15,
+            title: 'Bulgarian Split Squat',
+            category: 'Legs',
+            difficulty: 'Advanced',
+            videoUrl: 'https://www.youtube.com/watch?v=jsDMCFLB3Wg',
+            thumbnail: 'https://img.youtube.com/vi/jsDMCFLB3Wg/maxresdefault.jpg'
+        },
+        
+        // SHOULDERS
+        {
+            id: 16,
+            title: 'Overhead Press',
+            category: 'Shoulders',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=2yjwXTZQDDI',
+            thumbnail: 'https://img.youtube.com/vi/2yjwXTZQDDI/maxresdefault.jpg'
+        },
+        {
+            id: 17,
+            title: 'Lateral Raise',
+            category: 'Shoulders',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=q9cJrMPg0pQ',
+            thumbnail: 'https://img.youtube.com/vi/q9cJrMPg0pQ/maxresdefault.jpg'
+        },
+        {
+            id: 18,
+            title: 'Machine Shoulder Press',
+            category: 'Shoulders',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=oSVmCf6fvqU',
+            thumbnail: 'https://img.youtube.com/vi/oSVmCf6fvqU/maxresdefault.jpg'
+        },
+        {
+            id: 19,
+            title: 'Face Pull',
+            category: 'Shoulders',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=eIwd5F7NVV0',
+            thumbnail: 'https://img.youtube.com/vi/eIwd5F7NVV0/maxresdefault.jpg'
+        },
+        {
+            id: 20,
+            title: 'Reverse Pec Deck',
+            category: 'Shoulders',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=OlsKd-v5x7M',
+            thumbnail: 'https://img.youtube.com/vi/OlsKd-v5x7M/maxresdefault.jpg'
+        },
+        
+        // ARMS
+        {
+            id: 21,
+            title: 'Barbell Curl',
+            category: 'Arms',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=kwG2ipFQV0I',
+            thumbnail: 'https://img.youtube.com/vi/kwG2ipFQV0I/maxresdefault.jpg'
+        },
+        {
+            id: 22,
+            title: 'Dumbbell Curl',
+            category: 'Arms',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=ykJmreCEZK0',
+            thumbnail: 'https://img.youtube.com/vi/ykJmreCEZK0/maxresdefault.jpg'
+        },
+        {
+            id: 23,
+            title: 'Tricep Rope Pushdown',
+            category: 'Arms',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=xHqqVBJkbcE',
+            thumbnail: 'https://img.youtube.com/vi/xHqqVBJkbcE/maxresdefault.jpg'
+        },
+        {
+            id: 24,
+            title: 'Tricep Dip',
+            category: 'Arms',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=KF-UwJrdFdY',
+            thumbnail: 'https://img.youtube.com/vi/KF-UwJrdFdY/maxresdefault.jpg'
+        },
+        {
+            id: 25,
+            title: 'Overhead Tricep Extension',
+            category: 'Arms',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=4iKiM_QFf2Q',
+            thumbnail: 'https://img.youtube.com/vi/4iKiM_QFf2Q/maxresdefault.jpg'
+        },
+        {
+            id: 26,
+            title: 'Hammer Curl',
+            category: 'Arms',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=zC3nLlEvin0',
+            thumbnail: 'https://img.youtube.com/vi/zC3nLlEvin0/maxresdefault.jpg'
+        },
+        
+        // CORE
+        {
+            id: 27,
+            title: 'Barbell Back Squat',
+            category: 'Core',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=ultWZbGWL5c',
+            thumbnail: 'https://img.youtube.com/vi/ultWZbGWL5c/maxresdefault.jpg'
+        },
+        {
+            id: 28,
+            title: 'Decline Sit Up',
+            category: 'Core',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=_SjfknVTZ3c',
+            thumbnail: 'https://img.youtube.com/vi/_SjfknVTZ3c/maxresdefault.jpg'
+        },
+        {
+            id: 29,
+            title: 'Cable Woodchop',
+            category: 'Core',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=l8yASUiL9SE',
+            thumbnail: 'https://img.youtube.com/vi/l8yASUiL9SE/maxresdefault.jpg'
+        },
+        {
+            id: 30,
+            title: 'Hanging Leg Raise',
+            category: 'Core',
+            difficulty: 'Advanced',
+            videoUrl: 'https://www.youtube.com/watch?v=j40YM8F_Ado',
+            thumbnail: 'https://img.youtube.com/vi/j40YM8F_Ado/maxresdefault.jpg'
+        },
+        
+        // CARDIO
+        {
+            id: 31,
+            title: 'Treadmill Running',
+            category: 'Cardio',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=u7F7AABN1Tw',
+            thumbnail: 'https://img.youtube.com/vi/u7F7AABN1Tw/maxresdefault.jpg'
+        },
+        {
+            id: 32,
+            title: 'Rowing Machine',
+            category: 'Cardio',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=U7KSXWL8_oU',
+            thumbnail: 'https://img.youtube.com/vi/U7KSXWL8_oU/maxresdefault.jpg'
+        },
+        {
+            id: 33,
+            title: 'Stationary Bike',
+            category: 'Cardio',
+            difficulty: 'Beginner',
+            videoUrl: 'https://www.youtube.com/watch?v=yYbMU2gJ1xM',
+            thumbnail: 'https://img.youtube.com/vi/yYbMU2gJ1xM/maxresdefault.jpg'
+        },
+        {
+            id: 34,
+            title: 'Jump Rope',
+            category: 'Cardio',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=CSkQ3w19v4c',
+            thumbnail: 'https://img.youtube.com/vi/CSkQ3w19v4c/maxresdefault.jpg'
+        },
+        {
+            id: 35,
+            title: 'Stair Climber',
+            category: 'Cardio',
+            difficulty: 'Intermediate',
+            videoUrl: 'https://www.youtube.com/watch?v=HkHQfJkpFmQ',
+            thumbnail: 'https://img.youtube.com/vi/HkHQfJkpFmQ/maxresdefault.jpg'
         }
     ];
 }

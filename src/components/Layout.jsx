@@ -1,13 +1,36 @@
-import React from 'react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Dumbbell, Calendar, TrendingUp, Cpu, Users, Shield } from 'lucide-react';
+import { LayoutDashboard, Dumbbell, Calendar, TrendingUp, Users, Shield, LogOut, Menu } from 'lucide-react';
 import XpBar from './XpBar';
 import LevelUpModal from './LevelUpModal';
 
 const Layout = () => {
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  const handleSignOut = () => {
+    try {
+      logout();
+    } catch (e) {
+      console.warn('Sign out error', e.message);
+    }
+    navigate('/login');
+  };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function onDocClick(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    }
+    if (menuOpen) document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, [menuOpen]);
 
   const clientNavItems = [
     { icon: LayoutDashboard, label: 'SYSTEM', path: '/' },
@@ -30,16 +53,29 @@ const Layout = () => {
 
       {/* Top HUD Bar */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-hud-dark border-b border-neon-green/30 z-50 flex items-center justify-between px-6 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <Cpu className="text-neon-green animate-pulse" />
+        <div className="flex items-center gap-3 relative">
+          <button onClick={() => setMenuOpen(open => !open)} aria-label="Open menu" className="p-2 rounded-md border border-white/5 bg-black/30 text-neon-green hover:bg-neon-green/10">
+            <Menu size={20} />
+          </button>
           <span className="font-orbitron text-2xl font-bold tracking-widest text-white">
             LEVEL<span className="text-neon-green">UP</span>
           </span>
+
+          {/* Dropdown menu anchored to left */}
+          {menuOpen && (
+            <div ref={menuRef} className="absolute left-0 top-16 mt-2 w-44 bg-hud-dark border border-neon-green/20 rounded shadow-lg z-50 py-2">
+              <Link to="/" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-white hover:bg-neon-green/5">Home</Link>
+              <Link to="/settings" onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-white hover:bg-neon-green/5">Settings</Link>
+              <div className="border-t border-white/5 my-1"></div>
+              <button onClick={() => { setMenuOpen(false); handleSignOut(); }} className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-900/10">Sign Out</button>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4 text-xs font-bold tracking-widest text-neon-green/60">
           <span>SYS.ONLINE</span>
           <span>V.2.1.0</span>
         </div>
+
       </header>
 
       {/* Side Navigation (Desktop) */}

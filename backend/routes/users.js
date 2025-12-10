@@ -34,10 +34,21 @@ router.put('/:id', authMiddleware, async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    const { name, status, xp, level, rank } = req.body;
+    // Only allow specific fields to be updated via this endpoint
+    const { name, status, xp, level, rank, avatar, bio, notes } = req.body;
+    const updates = {};
+    if (name !== undefined) updates.name = name;
+    if (status !== undefined) updates.status = status;
+    if (xp !== undefined) updates.xp = xp;
+    if (level !== undefined) updates.level = level;
+    if (rank !== undefined) updates.rank = rank;
+    if (avatar !== undefined) updates.avatar = avatar;
+    if (bio !== undefined) updates.bio = bio;
+    if (notes !== undefined) updates.notes = notes;
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { name, status, xp, level, rank },
+      updates,
       { new: true }
     ).select('-password');
 

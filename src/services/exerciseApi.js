@@ -39,16 +39,58 @@ async function fetchJson(path) {
 }
 
 export const exerciseApi = {
-  // Get all exercises (may be large)
+  // Get all exercises - prioritize local DB first
   getAllExercises: async () => {
-    return fetchJson('/exercises');
+    try {
+      // Import db for local exercises
+      const { db } = await import('./db');
+      const localExercises = db.getWorkouts() || [];
+      if (localExercises && localExercises.length > 0) {
+        return localExercises;
+      }
+    } catch (e) {
+      console.warn('Failed to load local exercises:', e.message);
+    }
+    
+    try {
+      // Fallback: Try to get common body parts from ExerciseDB
+      const bodyParts = ['back', 'chest', 'legs', 'shoulders', 'arms', 'forearms', 'cardio'];
+      const allExercises = [];
+      const seen = new Set();
+      
+      for (const part of bodyParts) {
+        try {
+          const exercises = await fetchJson(`/exercises/bodyPart/${encodeURIComponent(part)}`);
+          for (const ex of exercises) {
+            const key = `${ex.name}-${ex.target}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              allExercises.push(ex);
+            }
+          }
+        } catch (e) {
+          console.warn(`Failed to fetch ${part}:`, e.message);
+        }
+      }
+      return allExercises;
+    } catch (e) {
+      console.warn('ExerciseDB fetch failed:', e.message);
+      return [];
+    }
   },
 
   // Search exercises by query (API-specific)
   searchExercises: async (query) => {
-    // For the endpoint: /api/v1/exercises/search?search=...
-    const path = `/api/v1/exercises/search?search=${encodeURIComponent(query)}`;
-    return fetchJson(path);
+    try {
+      // For the endpoint: /exercises/name/{name}
+      const path = `/exercises/name/${encodeURIComponent(query)}`;
+      return await fetchJson(path);
+    } catch (e) {
+      // Fallback: filter from all exercises
+      console.warn('Search endpoint failed, using client-side filter:', e.message);
+      const all = await exerciseApi.getAllExercises();
+      return all.filter(ex => (ex.name || '').toLowerCase().includes(query.toLowerCase()));
+    }
   },
 
   // Get exercise by id (some ExerciseDB instances use /exercises/exercise/{id})
@@ -78,10 +120,9 @@ export const exerciseApi = {
 
   // Search by name (client-side fallback if API doesn't provide search endpoint)
   searchByName: async (name) => {
-    // Many ExerciseDB deployments don't provide a search endpoint; fetch all and filter
     const all = await exerciseApi.getAllExercises();
     const q = (name || '').toLowerCase();
-    return all.filter(e => (e.name || e.gifUrl || '').toLowerCase().includes(q));
+    return all.filter(e => (e.name || e.title || e.gifUrl || '').toLowerCase().includes(q));
   }
 };
 

@@ -12,6 +12,7 @@ import ClientProfile from './pages/ClientProfile';
 import Login from './pages/Login';
 import TrainerDashboard from './pages/TrainerDashboard';
 import ProtocolEditor from './pages/ProtocolEditor';
+import Settings from './pages/Settings';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -51,6 +52,7 @@ const App = () => {
                         <Route path="plan" element={<ActivePlan />} />
                         <Route path="progress" element={<Progress />} />
                         <Route path="client/:id" element={<ClientProfile />} />
+                        <Route path="settings" element={<Settings />} />
                         
                         {/* Trainer Routes */}
                         <Route path="trainer" element={

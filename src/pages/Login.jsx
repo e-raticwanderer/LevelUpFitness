@@ -4,16 +4,40 @@ import { useAuth } from '../context/AuthContext';
 import { Shield, User, Fingerprint, Scan } from 'lucide-react';
 
 const Login = () => {
-    const { login } = useAuth();
+    const { login, register } = useAuth();
     const navigate = useNavigate();
     const [scanning, setScanning] = useState(false);
+    const [selectedRole, setSelectedRole] = useState(null);
+    const [mode, setMode] = useState('login'); // 'login' | 'register'
+    const [form, setForm] = useState({ name: '', email: '', password: '' });
+    const [submitting, setSubmitting] = useState(false);
 
-    const handleLogin = (role) => {
+    const handleDemoLogin = (role) => {
         setScanning(true);
-        setTimeout(() => {
-            login(role, role === 'trainer' ? 'trainer-1' : 'client-1', role === 'trainer' ? 'Commander Shepard' : 'John Doe');
+        setTimeout(async () => {
+            await login({ role, demoId: role === 'trainer' ? 'trainer-1' : 'client-1', demoName: role === 'trainer' ? 'Commander Shepard' : 'John Doe' });
             navigate(role === 'trainer' ? '/trainer' : '/');
-        }, 1500);
+        }, 800);
+    };
+
+    const submitAuth = async (e) => {
+        e.preventDefault();
+        if (!selectedRole) return;
+        setSubmitting(true);
+        try {
+            if (mode === 'register') {
+                await register({ name: form.name, email: form.email, password: form.password, role: selectedRole });
+                navigate(selectedRole === 'trainer' ? '/trainer' : '/');
+            } else {
+                await login({ email: form.email, password: form.password });
+                navigate(selectedRole === 'trainer' ? '/trainer' : '/');
+            }
+        } catch (err) {
+            console.error('Auth error', err);
+            // In a real UI we'd show a message
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -36,41 +60,70 @@ const Login = () => {
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <button
-                        onClick={() => handleLogin('client')}
-                        disabled={scanning}
-                        className="w-full group relative overflow-hidden p-4 bg-black/40 border border-neon-green/30 hover:border-neon-green hover:bg-neon-green/10 transition-all duration-300 clip-path-polygon"
-                        style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="p-2 bg-neon-green/10 text-neon-green rounded-sm group-hover:bg-neon-green group-hover:text-black transition-colors">
-                                <User size={24} />
-                            </div>
-                            <div className="text-left">
-                                <h3 className="font-orbitron text-white text-lg tracking-wide group-hover:text-neon-green transition-colors">OPERATIVE</h3>
-                                <p className="text-xs text-gray-500 font-mono">CLIENT ACCESS LEVEL 1</p>
-                            </div>
-                        </div>
-                    </button>
+                    <div className="space-y-4">
+                        {!selectedRole ? (
+                            <>
+                                <button
+                                    onClick={() => setSelectedRole('client')}
+                                    disabled={scanning}
+                                    className="w-full group relative overflow-hidden p-4 bg-black/40 border border-neon-green/30 hover:border-neon-green hover:bg-neon-green/10 transition-all duration-300"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-2 bg-neon-green/10 text-neon-green rounded-sm">
+                                            <User size={24} />
+                                        </div>
+                                        <div className="text-left">
+                                            <h3 className="font-orbitron text-white text-lg tracking-wide">OPERATIVE</h3>
+                                            <p className="text-xs text-gray-500 font-mono">CLIENT ACCESS</p>
+                                        </div>
+                                    </div>
+                                </button>
 
-                    <button
-                        onClick={() => handleLogin('trainer')}
-                        disabled={scanning}
-                        className="w-full group relative overflow-hidden p-4 bg-black/40 border border-neon-blue/30 hover:border-neon-blue hover:bg-neon-blue/10 transition-all duration-300 clip-path-polygon"
-                        style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="p-2 bg-neon-blue/10 text-neon-blue rounded-sm group-hover:bg-neon-blue group-hover:text-black transition-colors">
-                                <Shield size={24} />
+                                <button
+                                    onClick={() => setSelectedRole('trainer')}
+                                    disabled={scanning}
+                                    className="w-full group relative overflow-hidden p-4 bg-black/40 border border-neon-blue/30 hover:border-neon-blue hover:bg-neon-blue/10 transition-all duration-300"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-2 bg-neon-blue/10 text-neon-blue rounded-sm">
+                                            <Shield size={24} />
+                                        </div>
+                                        <div className="text-left">
+                                            <h3 className="font-orbitron text-white text-lg tracking-wide">COMMANDER</h3>
+                                            <p className="text-xs text-gray-500 font-mono">TRAINER ACCESS</p>
+                                        </div>
+                                    </div>
+                                </button>
+                            </>
+                        ) : (
+                            <div>
+                                {/* Portal mode switch */}
+                                <div className="flex justify-between items-center mb-4">
+                                    <div className="font-mono text-xs text-gray-400">Portal: <span className="text-white">{selectedRole === 'trainer' ? 'Trainer' : 'Client'}</span></div>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => setMode('login')} className={`px-3 py-1 text-xs rounded ${mode==='login' ? 'bg-neon-green text-black' : 'border border-white/5 text-white'}`}>Login</button>
+                                        <button onClick={() => setMode('register')} className={`px-3 py-1 text-xs rounded ${mode==='register' ? 'bg-neon-blue text-black' : 'border border-white/5 text-white'}`}>Register</button>
+                                    </div>
+                                </div>
+
+                                <form onSubmit={submitAuth} className="space-y-3">
+                                    {mode === 'register' && (
+                                        <input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} required placeholder="Full name" className="w-full p-2 bg-black/30 border border-white/5 text-white rounded" />
+                                    )}
+                                    <input value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))} required placeholder="Email" type="email" className="w-full p-2 bg-black/30 border border-white/5 text-white rounded" />
+                                    <input value={form.password} onChange={e=>setForm(f=>({...f,password:e.target.value}))} required placeholder="Password" type="password" className="w-full p-2 bg-black/30 border border-white/5 text-white rounded" />
+                                    <div className="flex gap-2">
+                                        <button type="submit" disabled={submitting} className="flex-1 p-2 bg-neon-green text-black rounded">{mode==='register' ? 'Create account' : 'Sign in'}</button>
+                                        <button type="button" onClick={()=>{ setSelectedRole(null); setForm({name:'',email:'',password:''}); setMode('login'); }} className="p-2 border border-white/10 rounded">Back</button>
+                                    </div>
+                                    <div className="text-center text-xs text-gray-500">or</div>
+                                    <div className="flex gap-2">
+                                        <button type="button" onClick={()=>handleDemoLogin(selectedRole)} className="flex-1 p-2 border border-white/10 rounded">Quick Demo</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div className="text-left">
-                                <h3 className="font-orbitron text-white text-lg tracking-wide group-hover:text-neon-blue transition-colors">COMMANDER</h3>
-                                <p className="text-xs text-gray-500 font-mono">TRAINER ACCESS LEVEL 5</p>
-                            </div>
-                        </div>
-                    </button>
-                </div>
+                        )}
+                    </div>
 
                 <div className="mt-8 pt-6 border-t border-white/5 text-center">
                     <p className="text-[10px] text-gray-600 font-mono uppercase tracking-widest">
